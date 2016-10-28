@@ -88,13 +88,13 @@ public class FPCameraController {
     // method: moveUp
     // purpose: Moves the camera up
     public void moveUp(float distance) {
-        position.y -= distance;
+        position.y += distance;
     }
     
     // method: moveDown
     // purpose: Moves the camera down
     public void moveDown(float distance) {
-        position.y += distance;
+        position.y -= distance;
     }
     
     // method: lookThrough
