@@ -88,13 +88,13 @@ public class FPCameraController {
     // method: moveUp
     // purpose: Moves the camera up
     public void moveUp(float distance) {
-        position.y += distance;
+        position.y -= distance;
     }
     
     // method: moveDown
     // purpose: Moves the camera down
     public void moveDown(float distance) {
-        position.y -= distance;
+        position.y += distance;
     }
     
     // method: lookThrough
@@ -146,7 +146,7 @@ public class FPCameraController {
             if (Keyboard.isKeyDown(Keyboard.KEY_SPACE)) { // move up
                 moveUp(movementSpeed);
             }
-            if (Keyboard.isKeyDown(Keyboard.KEY_E)) { // move down
+            if (Keyboard.isKeyDown(Keyboard.KEY_LSHIFT)) { // move down
                 moveDown(movementSpeed);
             }
             
@@ -234,43 +234,7 @@ public class FPCameraController {
     // method: render
     // purpose: Render primitives to the camera
     private void render() {
-        milestone1(0.0f, 0.0f, -3.0f, 1.0f);
-//        try {
-//            glBegin(GL_QUADS);
-//                glColor3f(0.0f,0.0f,1.0f);
-//                glVertex3f(1.0f, 1.0f, 1.0f);
-//                glVertex3f(-1.0f, 1.0f, 1.0f);
-//                glVertex3f(-1.0f, 1.0f, -1.0f);
-//                glVertex3f(1.0f, 1.0f, -1.0f);
-//                glColor3f(0.0f, 1.0f, 0.0f);
-//                glVertex3f(1.0f, -1.0f, 1.0f);
-//                glVertex3f(-1.0f, -1.0f, 1.0f);
-//                glVertex3f(-1.0f, -1.0f, -1.0f);
-//                glVertex3f(1.0f, -1.0f, -1.0f);
-//                glColor3f(0.0f, 1.0f, 1.0f);
-//                glVertex3f(1.0f,-1.0f, -1.0f);
-//                glVertex3f(-1.0f,-1.0f, -1.0f);
-//                glVertex3f(-1.0f, 1.0f, -1.0f);
-//                glVertex3f(1.0f, 1.0f, -1.0f);
-//                glColor3f(1.0f, 0.0f, 0.0f);
-//                glVertex3f(1.0f,-1.0f, 1.0f);
-//                glVertex3f(-1.0f,-1.0f, 1.0f);
-//                glVertex3f(-1.0f, 1.0f, 1.0f);
-//                glVertex3f(1.0f, 1.0f, 1.0f);
-//                glColor3f(1.0f, 0.0f, 1.0f);
-//                glVertex3f(1.0f, -1.0f, -1.0f);
-//                glVertex3f(1.0f, 1.0f, -1.0f);
-//                glVertex3f(1.0f, 1.0f, 1.0f);
-//                glVertex3f(1.0f, -1.0f, 1.0f);
-//                glColor3f(1.0f, 1.0f, 0.0f);
-//                glVertex3f(-1.0f, -1.0f, 1.0f);
-//                glVertex3f(-1.0f, 1.0f, 1.0f);
-//                glVertex3f(-1.0f, 1.0f, -1.0f);
-//                glVertex3f(-1.0f, -1.0f, -1.0f);
-//            glEnd();
-//        } catch (Exception e) {
-//            
-//        }
+        milestone1(0.0f, 0.0f, -3.0f, 3.0f);
     }
     
     // method: isCloseRequested
