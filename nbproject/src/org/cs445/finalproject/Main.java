@@ -75,6 +75,8 @@ public class Main {
     // method: initGL
     // purpose: Initialize a OpenGL context
     private void initGL() {
+        glClearDepth(1.0f);
+        glEnable(GL_DEPTH_TEST);
         glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
         glMatrixMode(GL_PROJECTION);
         glLoadIdentity();
