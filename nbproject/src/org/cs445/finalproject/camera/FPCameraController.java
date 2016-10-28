@@ -118,7 +118,7 @@ public class FPCameraController {
         float lastTime = 0.0f; // when the last frame rendered
         long time = 0;
         float mouseSensitivity = 0.09f;
-        float movementSpeed = 0.35f;
+        float movementSpeed = 0.07f;
         Mouse.setGrabbed(true); // hide the mouse
         while(!isCloseRequested()) {
             time = Sys.getTime();
@@ -160,45 +160,117 @@ public class FPCameraController {
         Display.destroy();
     }
     
+    // method: milestone1
+    // purpose: draws a cube with different colors on each side.
+    
+    private void milestone1( float x, float y, float z, float size ) {
+        glBegin(GL_QUADS);
+            glColor3f(0.0f, 0.0f, 1.0f);
+            glVertex3f( size / 2 + x, size / 2 + y, size / 2 + z );
+            glVertex3f( -size / 2 + x, size / 2 + y, size / 2 + z );
+            glVertex3f( -size / 2 + x, size / 2 + y, -size / 2 + z );
+            glVertex3f( size / 2 + x, size / 2 + y, -size / 2 + z );
+            glColor3f(0.0f, 1.0f, 0.0f);
+            glVertex3f( size / 2 + x, -size / 2 + y, size / 2 + z);
+            glVertex3f( -size / 2 + x, -size / 2 + y, size / 2 + z);
+            glVertex3f( -size / 2 + x, -size / 2 + y, -size / 2 + z);
+            glVertex3f( size / 2 + x, -size / 2 + y, -size / 2 + z);
+            glColor3f(0.0f, 1.0f, 1.0f);
+            glVertex3f( size / 2 + x,-size / 2 + y, -size / 2 + z);
+            glVertex3f( -size / 2 + x,-size / 2 + y, -size / 2 + z);
+            glVertex3f(-size / 2 + x, size / 2 + y, -size / 2 + z);
+            glVertex3f(size / 2 + x, size / 2 + y, -size / 2 + z);
+            glColor3f(1.0f, 0.0f, 0.0f);
+            glVertex3f(size / 2 + x,-size / 2 + y, size / 2 + z);
+            glVertex3f(-size / 2 + x,-size / 2 + y, size / 2 + z);
+            glVertex3f(-size / 2 + x, size / 2 + y, size / 2 + z);
+            glVertex3f(size / 2 + x, size / 2 + y, size / 2 + z);
+            glColor3f(1.0f, 0.0f, 1.0f);
+            glVertex3f(size / 2 + x, -size / 2 + y, -size / 2 + z);
+            glVertex3f(size / 2 + x, size / 2 + y, -size / 2 + z);
+            glVertex3f(size / 2 + x, size / 2 + y, size / 2 + z);
+            glVertex3f(size / 2 + x, -size / 2 + y, size / 2 + z);
+            glColor3f(1.0f, 1.0f, 0.0f);
+            glVertex3f(-size / 2 + x, -size / 2 + y, size / 2 + z);
+            glVertex3f(-size / 2 + x, size / 2 + y, size / 2 + z);
+            glVertex3f(-size / 2 + x, size / 2 + y, -size / 2 + z);
+            glVertex3f(-size / 2 + x, -size / 2 + y, -size / 2 + z);
+        glEnd();
+    }
+    
+    // method: drawCube
+    // purpose: draws a cube.
+    
+    private void drawCube( float r, float g, float b, float x, float y, float z, float size ) {
+        glBegin(GL_QUADS);
+            glColor3f(r, g, b);
+            glVertex3f( size / 2 + x, size / 2 + y, size / 2 + z );
+            glVertex3f( -size / 2 + x, size / 2 + y, size / 2 + z );
+            glVertex3f( -size / 2 + x, size / 2 + y, -size / 2 + z );
+            glVertex3f( size / 2 + x, size / 2 + y, -size / 2 + z );
+            glVertex3f( size / 2 + x, -size / 2 + y, size / 2 + z);
+            glVertex3f( -size / 2 + x, -size / 2 + y, size / 2 + z);
+            glVertex3f( -size / 2 + x, -size / 2 + y, -size / 2 + z);
+            glVertex3f( size / 2 + x, -size / 2 + y, -size / 2 + z);
+            glVertex3f( size / 2 + x,-size / 2 + y, -size / 2 + z);
+            glVertex3f( -size / 2 + x,-size / 2 + y, -size / 2 + z);
+            glVertex3f(-size / 2 + x, size / 2 + y, -size / 2 + z);
+            glVertex3f(size / 2 + x, size / 2 + y, -size / 2 + z);
+            glVertex3f(size / 2 + x,-size / 2 + y, size / 2 + z);
+            glVertex3f(-size / 2 + x,-size / 2 + y, size / 2 + z);
+            glVertex3f(-size / 2 + x, size / 2 + y, size / 2 + z);
+            glVertex3f(size / 2 + x, size / 2 + y, size / 2 + z);
+            glVertex3f(size / 2 + x, -size / 2 + y, -size / 2 + z);
+            glVertex3f(size / 2 + x, size / 2 + y, -size / 2 + z);
+            glVertex3f(size / 2 + x, size / 2 + y, size / 2 + z);
+            glVertex3f(size / 2 + x, -size / 2 + y, size / 2 + z);
+            glVertex3f(-size / 2 + x, -size / 2 + y, size / 2 + z);
+            glVertex3f(-size / 2 + x, size / 2 + y, size / 2 + z);
+            glVertex3f(-size / 2 + x, size / 2 + y, -size / 2 + z);
+            glVertex3f(-size / 2 + x, -size / 2 + y, -size / 2 + z);
+        glEnd();
+    }
+    
     // method: render
     // purpose: Render primitives to the camera
     private void render() {
-        try {
-            glBegin(GL_QUADS);
-                glColor3f(0.0f,0.0f,1.0f);
-                glVertex3f(1.0f, 1.0f, 1.0f);
-                glVertex3f(-1.0f, 1.0f, 1.0f);
-                glVertex3f(-1.0f, 1.0f, -1.0f);
-                glVertex3f(1.0f, 1.0f, -1.0f);
-                glColor3f(0.0f, 1.0f, 0.0f);
-                glVertex3f(1.0f, -1.0f, 1.0f);
-                glVertex3f(-1.0f, -1.0f, 1.0f);
-                glVertex3f(-1.0f, -1.0f, -1.0f);
-                glVertex3f(1.0f, -1.0f, -1.0f);
-                glColor3f(0.0f, 1.0f, 1.0f);
-                glVertex3f(1.0f,-1.0f, -1.0f);
-                glVertex3f(-1.0f,-1.0f, -1.0f);
-                glVertex3f(-1.0f, 1.0f, -1.0f);
-                glVertex3f(1.0f, 1.0f, -1.0f);
-                glColor3f(1.0f, 0.0f, 0.0f);
-                glVertex3f(1.0f,-1.0f, 1.0f);
-                glVertex3f(-1.0f,-1.0f, 1.0f);
-                glVertex3f(-1.0f, 1.0f, 1.0f);
-                glVertex3f(1.0f, 1.0f, 1.0f);
-                glColor3f(1.0f, 0.0f, 1.0f);
-                glVertex3f(1.0f, -1.0f, -1.0f);
-                glVertex3f(1.0f, 1.0f, -1.0f);
-                glVertex3f(1.0f, 1.0f, 1.0f);
-                glVertex3f(1.0f, -1.0f, 1.0f);
-                glColor3f(1.0f, 1.0f, 0.0f);
-                glVertex3f(-1.0f, -1.0f, 1.0f);
-                glVertex3f(-1.0f, 1.0f, 1.0f);
-                glVertex3f(-1.0f, 1.0f, -1.0f);
-                glVertex3f(-1.0f, -1.0f, -1.0f);
-            glEnd();
-        } catch (Exception e) {
-            
-        }
+        milestone1(0.0f, 0.0f, -3.0f, 1.0f);
+//        try {
+//            glBegin(GL_QUADS);
+//                glColor3f(0.0f,0.0f,1.0f);
+//                glVertex3f(1.0f, 1.0f, 1.0f);
+//                glVertex3f(-1.0f, 1.0f, 1.0f);
+//                glVertex3f(-1.0f, 1.0f, -1.0f);
+//                glVertex3f(1.0f, 1.0f, -1.0f);
+//                glColor3f(0.0f, 1.0f, 0.0f);
+//                glVertex3f(1.0f, -1.0f, 1.0f);
+//                glVertex3f(-1.0f, -1.0f, 1.0f);
+//                glVertex3f(-1.0f, -1.0f, -1.0f);
+//                glVertex3f(1.0f, -1.0f, -1.0f);
+//                glColor3f(0.0f, 1.0f, 1.0f);
+//                glVertex3f(1.0f,-1.0f, -1.0f);
+//                glVertex3f(-1.0f,-1.0f, -1.0f);
+//                glVertex3f(-1.0f, 1.0f, -1.0f);
+//                glVertex3f(1.0f, 1.0f, -1.0f);
+//                glColor3f(1.0f, 0.0f, 0.0f);
+//                glVertex3f(1.0f,-1.0f, 1.0f);
+//                glVertex3f(-1.0f,-1.0f, 1.0f);
+//                glVertex3f(-1.0f, 1.0f, 1.0f);
+//                glVertex3f(1.0f, 1.0f, 1.0f);
+//                glColor3f(1.0f, 0.0f, 1.0f);
+//                glVertex3f(1.0f, -1.0f, -1.0f);
+//                glVertex3f(1.0f, 1.0f, -1.0f);
+//                glVertex3f(1.0f, 1.0f, 1.0f);
+//                glVertex3f(1.0f, -1.0f, 1.0f);
+//                glColor3f(1.0f, 1.0f, 0.0f);
+//                glVertex3f(-1.0f, -1.0f, 1.0f);
+//                glVertex3f(-1.0f, 1.0f, 1.0f);
+//                glVertex3f(-1.0f, 1.0f, -1.0f);
+//                glVertex3f(-1.0f, -1.0f, -1.0f);
+//            glEnd();
+//        } catch (Exception e) {
+//            
+//        }
     }
     
     // method: isCloseRequested
