@@ -5,7 +5,7 @@
  * class: CS 445 – Computer Graphics
  *
  * assignment: Final Project 
- * date last modified: 10/27/16
+ * date last modified: 11/3/16
  *
  * purpose: Controller for the First Person Camera
  *
@@ -13,6 +13,7 @@
  */
 package org.cs445.finalproject.camera;
 
+import org.cs445.finalproject.geometry.Chunk;
 import static org.lwjgl.opengl.GL11.*;
 
 import org.lwjgl.Sys;
@@ -28,6 +29,8 @@ public class FPCameraController {
     
     private float yaw = 0.0f;
     private float pitch = 0.0f;
+    
+    private Chunk chunk;
     
     public FPCameraController(float x, float y, float z) {
         position = new Vector3f(x, y, z);
@@ -112,13 +115,14 @@ public class FPCameraController {
     // method: gameLoop
     // purpose: Calls render and handles the camera movement
     public void gameLoop() {
+        chunk = new Chunk(-30, -80, -80);
         float dx = 0.0f;
         float dy = 0.0f;
         float dt = 0.0f; // length of the frame
         float lastTime = 0.0f; // when the last frame rendered
         long time = 0;
         float mouseSensitivity = 0.09f;
-        float movementSpeed = 0.07f;
+        float movementSpeed = 0.35f;
         Mouse.setGrabbed(true); // hide the mouse
         while(!isCloseRequested()) {
             time = Sys.getTime();
@@ -160,81 +164,10 @@ public class FPCameraController {
         Display.destroy();
     }
     
-    // method: milestone1
-    // purpose: draws a cube with different colors on each side.
-    
-    private void milestone1( float x, float y, float z, float size ) {
-        glBegin(GL_QUADS);
-            glColor3f(0.0f, 0.0f, 1.0f);
-            glVertex3f( size / 2 + x, size / 2 + y, size / 2 + z );
-            glVertex3f( -size / 2 + x, size / 2 + y, size / 2 + z );
-            glVertex3f( -size / 2 + x, size / 2 + y, -size / 2 + z );
-            glVertex3f( size / 2 + x, size / 2 + y, -size / 2 + z );
-            glColor3f(0.0f, 1.0f, 0.0f);
-            glVertex3f( size / 2 + x, -size / 2 + y, size / 2 + z);
-            glVertex3f( -size / 2 + x, -size / 2 + y, size / 2 + z);
-            glVertex3f( -size / 2 + x, -size / 2 + y, -size / 2 + z);
-            glVertex3f( size / 2 + x, -size / 2 + y, -size / 2 + z);
-            glColor3f(0.0f, 1.0f, 1.0f);
-            glVertex3f( size / 2 + x,-size / 2 + y, -size / 2 + z);
-            glVertex3f( -size / 2 + x,-size / 2 + y, -size / 2 + z);
-            glVertex3f(-size / 2 + x, size / 2 + y, -size / 2 + z);
-            glVertex3f(size / 2 + x, size / 2 + y, -size / 2 + z);
-            glColor3f(1.0f, 0.0f, 0.0f);
-            glVertex3f(size / 2 + x,-size / 2 + y, size / 2 + z);
-            glVertex3f(-size / 2 + x,-size / 2 + y, size / 2 + z);
-            glVertex3f(-size / 2 + x, size / 2 + y, size / 2 + z);
-            glVertex3f(size / 2 + x, size / 2 + y, size / 2 + z);
-            glColor3f(1.0f, 0.0f, 1.0f);
-            glVertex3f(size / 2 + x, -size / 2 + y, -size / 2 + z);
-            glVertex3f(size / 2 + x, size / 2 + y, -size / 2 + z);
-            glVertex3f(size / 2 + x, size / 2 + y, size / 2 + z);
-            glVertex3f(size / 2 + x, -size / 2 + y, size / 2 + z);
-            glColor3f(1.0f, 1.0f, 0.0f);
-            glVertex3f(-size / 2 + x, -size / 2 + y, size / 2 + z);
-            glVertex3f(-size / 2 + x, size / 2 + y, size / 2 + z);
-            glVertex3f(-size / 2 + x, size / 2 + y, -size / 2 + z);
-            glVertex3f(-size / 2 + x, -size / 2 + y, -size / 2 + z);
-        glEnd();
-    }
-    
-    // method: drawCube
-    // purpose: draws a cube.
-    
-    private void drawCube( float r, float g, float b, float x, float y, float z, float size ) {
-        glBegin(GL_QUADS);
-            glColor3f(r, g, b);
-            glVertex3f( size / 2 + x, size / 2 + y, size / 2 + z );
-            glVertex3f( -size / 2 + x, size / 2 + y, size / 2 + z );
-            glVertex3f( -size / 2 + x, size / 2 + y, -size / 2 + z );
-            glVertex3f( size / 2 + x, size / 2 + y, -size / 2 + z );
-            glVertex3f( size / 2 + x, -size / 2 + y, size / 2 + z);
-            glVertex3f( -size / 2 + x, -size / 2 + y, size / 2 + z);
-            glVertex3f( -size / 2 + x, -size / 2 + y, -size / 2 + z);
-            glVertex3f( size / 2 + x, -size / 2 + y, -size / 2 + z);
-            glVertex3f( size / 2 + x,-size / 2 + y, -size / 2 + z);
-            glVertex3f( -size / 2 + x,-size / 2 + y, -size / 2 + z);
-            glVertex3f(-size / 2 + x, size / 2 + y, -size / 2 + z);
-            glVertex3f(size / 2 + x, size / 2 + y, -size / 2 + z);
-            glVertex3f(size / 2 + x,-size / 2 + y, size / 2 + z);
-            glVertex3f(-size / 2 + x,-size / 2 + y, size / 2 + z);
-            glVertex3f(-size / 2 + x, size / 2 + y, size / 2 + z);
-            glVertex3f(size / 2 + x, size / 2 + y, size / 2 + z);
-            glVertex3f(size / 2 + x, -size / 2 + y, -size / 2 + z);
-            glVertex3f(size / 2 + x, size / 2 + y, -size / 2 + z);
-            glVertex3f(size / 2 + x, size / 2 + y, size / 2 + z);
-            glVertex3f(size / 2 + x, -size / 2 + y, size / 2 + z);
-            glVertex3f(-size / 2 + x, -size / 2 + y, size / 2 + z);
-            glVertex3f(-size / 2 + x, size / 2 + y, size / 2 + z);
-            glVertex3f(-size / 2 + x, size / 2 + y, -size / 2 + z);
-            glVertex3f(-size / 2 + x, -size / 2 + y, -size / 2 + z);
-        glEnd();
-    }
-    
     // method: render
     // purpose: Render primitives to the camera
     private void render() {
-        milestone1(0.0f, 0.0f, -3.0f, 3.0f);
+        chunk.render();
     }
     
     // method: isCloseRequested
