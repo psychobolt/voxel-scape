@@ -16,8 +16,8 @@ A 3D game composed of Voxels, similiar to MineCraft, made for a Computer Graphic
 1. Clone this (https://github.com/psychobolt/voxelscape.git) repository.
 2. Open "nbproject".
 3. Add library LWJGL-2.9.2. See [wiki guide](http://wiki.lwjgl.org/wiki/Setting_Up_LWJGL_with_NetBeans).
-4. Go to Team > Libraries > Select LWJGL-2.9.2 > Add Folder e.g. "[...]voxelScape/libraries/lwjgl-2.9.2/native/[yourPlatform]/".
-5. Go to Team > Libraries > Create a new libarary named "Slick2D" > Add JAR e.g. "[...]/voxelscape/libraries/slick-util.jar".
+4. Go to Tools > Libraries > Select LWJGL-2.9.2 > Add Folder e.g. "[...]voxelScape/libraries/lwjgl-2.9.2/native/[yourPlatform]/".
+5. Go to Tools > Libraries > Create a new libarary named "Slick2D" > Add JAR e.g. "[...]/voxelscape/libraries/slick-util.jar".
 
 ## Controls
 
