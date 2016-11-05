@@ -5,7 +5,7 @@
  * class: CS 445 – Computer Graphics
  *
  * assignment: Final Project 
- * date last modified: 11/3/16
+ * date last modified: 11/4/16
  *
  * purpose: Representation of a single Voxel
  *
@@ -16,7 +16,6 @@ package org.cs445.finalproject.geometry;
 public class Block {
     
     public enum Type {
-        Default(-1),
         Grass(0),
         Sand(1),
         Water(2),

@@ -5,7 +5,7 @@
  * class: CS 445 – Computer Graphics
  *
  * assignment: Final Project 
- * date last modified: 11/3/16
+ * date last modified: 11/4/16
  *
  * purpose: Controller for the First Person Camera
  *
