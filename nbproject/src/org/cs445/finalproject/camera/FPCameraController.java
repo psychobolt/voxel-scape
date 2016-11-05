@@ -5,7 +5,7 @@
  * class: CS 445 – Computer Graphics
  *
  * assignment: Final Project 
- * date last modified: 11/4/16
+ * date last modified: 11/5/16
  *
  * purpose: Controller for the First Person Camera
  *
@@ -27,10 +27,13 @@ public class FPCameraController {
     private final Vector3f position;
     private final Vector3f lookAt;
     
-    private float yaw = 0.0f;
-    private float pitch = 0.0f;
+    private float yaw;
+    private float pitch;
     
-    private Chunk chunk;
+    private Chunk world;
+    private int worldX;
+    private int worldY;
+    private int worldZ;
     
     public FPCameraController(float x, float y, float z) {
         position = new Vector3f(x, y, z);
@@ -38,6 +41,11 @@ public class FPCameraController {
         lookAt.x = 0.0f;
         lookAt.y = 15.0f;
         lookAt.z = 0.0f;
+        yaw = 0.0f;
+        pitch = 0.0f;
+        worldX = -30;
+        worldY = -65;
+        worldZ = -40;
     }
     
     // method: yaw
@@ -115,7 +123,7 @@ public class FPCameraController {
     // method: gameLoop
     // purpose: Calls render and handles the camera movement
     public void gameLoop() {
-        chunk = new Chunk(-30, -80, -80);
+        world = new Chunk(worldX, worldY, worldZ);
         float dx = 0.0f;
         float dy = 0.0f;
         float dt = 0.0f; // length of the frame
@@ -153,6 +161,9 @@ public class FPCameraController {
             if (Keyboard.isKeyDown(Keyboard.KEY_LSHIFT)) { // move down
                 moveDown(movementSpeed);
             }
+            if (Keyboard.isKeyDown(Keyboard.KEY_R)) { // randomize world
+                world.randomize();
+            }
             
             glLoadIdentity();
             lookThrough();
@@ -167,7 +178,7 @@ public class FPCameraController {
     // method: render
     // purpose: Render primitives to the camera
     private void render() {
-        chunk.render();
+        world.render();
     }
     
     // method: isCloseRequested

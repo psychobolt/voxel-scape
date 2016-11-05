@@ -5,7 +5,7 @@
  * class: CS 445 – Computer Graphics
  *
  * assignment: Final Project
- * date last modified: 11/4/16
+ * date last modified: 11/5/16
  *
  * purpose: Representation of a group of Voxels
  *
@@ -14,12 +14,15 @@
 package org.cs445.finalproject.geometry;
 
 import java.nio.FloatBuffer;
+import java.util.HashSet;
 import static org.lwjgl.opengl.GL11.*;
 import static org.lwjgl.opengl.GL15.*;
 
 import java.util.Random;
+import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import org.cs445.finalproject.noise.SimplexNoise;
 import org.lwjgl.BufferUtils;
 import org.newdawn.slick.opengl.Texture;
 import org.newdawn.slick.opengl.TextureLoader;
@@ -29,7 +32,9 @@ public class Chunk {
     
     public static final int SIZE = 30;
     public static final int LENGTH = 2;
-    
+   
+    private int maxHeight;
+    private int minHeight;
     private final Block[][][] blocks;
     private Texture texture;
     private int vboVertexHandle;
@@ -38,10 +43,13 @@ public class Chunk {
     private final int startX, startY, startZ;
     
     private final Random random;
+    private int noiseLevel;
     
     private static final Logger LOGGER = Logger.getLogger(Chunk.class.getName());
     
     public Chunk(int startX, int startY, int startZ) {
+        maxHeight = SIZE;
+        minHeight = SIZE;
         random = new Random();
         blocks = new Block[SIZE][SIZE][SIZE];
         try {
@@ -51,28 +59,13 @@ public class Chunk {
         } catch (Exception e) {
             LOGGER.log(Level.WARNING, "Failed to load terrain.png", e);
         }
-        for (int x = 0; x < SIZE; x++) {
-            for (int y = 0; y < SIZE; y++) {
-                for (int z = 0; z < SIZE; z++) {
-                    if (random.nextFloat() > 0.7f) {
-                        blocks[x][y][z] = new Block(Block.Type.Grass);
-                    } else if (random.nextFloat() > 0.4f) {
-                        blocks[x][y][z] = new Block(Block.Type.Dirt);
-                    } else if (random.nextFloat() > 0.2f) {
-                        blocks[x][y][z] = new Block(Block.Type.Water);
-                    } else {
-                        blocks[x][y][z] = new Block(Block.Type.Dirt);
-                    }
-                }
-            }
-        }
         vboVertexHandle = glGenBuffers();
         vboColorHandle = glGenBuffers();
         vboTextureHandle = glGenBuffers();
         this.startX = startX;
         this.startY = startY;
         this.startZ = startZ;
-        rebuildMesh(startX, startY, startZ);
+        randomize();
     }
     
     // method: render
@@ -90,9 +83,20 @@ public class Chunk {
         glPopMatrix();
     }
     
+    // method: randomize
+    // purpose: Find a good random chunk
+    public void randomize() {
+        do {
+            rebuildMesh(startX, startY, startZ);
+        } while (noiseLevel < 5);
+        LOGGER.log(Level.INFO, "Noise level: " + noiseLevel);
+        noiseLevel = 0;
+    }
+    
     // method: rebuildMesh
     // purpose: Construct and bind the Voxel's vertex and color buffers
-    public void rebuildMesh(float startX, float startY, float startZ) {
+    private void rebuildMesh(float startX, float startY, float startZ) {
+        noiseLevel = 0;
         vboColorHandle = glGenBuffers();
         vboVertexHandle = glGenBuffers();
         vboTextureHandle = glGenBuffers();
@@ -102,10 +106,24 @@ public class Chunk {
             BufferUtils.createFloatBuffer(SIZE * SIZE * SIZE * 6 * 12);
         FloatBuffer vertexTextureData = 
             BufferUtils.createFloatBuffer(SIZE * SIZE * SIZE * 6 * 12);
+        int seed =  new Random().nextInt(7000);
+        LOGGER.log(Level.INFO, "Noise seed: " + seed);
+        SimplexNoise noise = new SimplexNoise(50000, 0.66, seed);
+        Set<Integer> heights = new HashSet<>();
         for (float x = 0.0f; x < SIZE; x++) {
             for (float z = 0.0f; z < SIZE; z++) {
-                for (float y = 0.0f; y < SIZE; y++) {
-                    Block block = blocks[(int) x][(int) y][(int) z];
+                int i = (int) (startX + x);
+                int k = (int) (startZ + z);
+                int height = Math.min(
+                    Math.max(maxHeight - (int) (100 * noise.getNoise(i, k)), 1), 
+                    maxHeight);
+                heights.add(height);
+                if (height < minHeight) {
+                    minHeight = height;
+                }
+                for (float y = 0; y < height; y++) {
+                    Block block = createBlock(y, height);
+                    blocks[(int) x][(int) y][(int) z] = block;
                     vertexPositionData.put(createCube(
                         startX + x * LENGTH, 
                         startY + y * LENGTH,
@@ -116,6 +134,7 @@ public class Chunk {
                 }
             }
         }
+        noiseLevel = heights.size();
         vertexPositionData.flip();
         vertexColorData.flip();
         vertexTextureData.flip();
@@ -128,6 +147,13 @@ public class Chunk {
         glBindBuffer(GL_ARRAY_BUFFER, vboTextureHandle);
         glBufferData(GL_ARRAY_BUFFER, vertexTextureData, GL_STATIC_DRAW);
         glBindBuffer(GL_ARRAY_BUFFER, 0);
+    }
+    
+    // method: createBlock
+    // purpose: Create a block with a type based on some height and level
+    private Block createBlock(float level, float maxHeight) {
+        float random = this.random.nextFloat();
+        return new Block(Block.Type.Dirt);
     }
     
     // method: createCube

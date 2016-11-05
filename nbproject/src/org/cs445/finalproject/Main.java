@@ -82,7 +82,7 @@ public class Main {
         glEnableClientState(GL_TEXTURE_COORD_ARRAY);
         glEnable(GL_DEPTH_TEST);
         glEnable(GL_TEXTURE_2D);
-        glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
+        glClearColor(0.5294f, 0.8078f, 0.92f, 1.0f);
         glMatrixMode(GL_PROJECTION);
         glLoadIdentity();
         GLU.gluPerspective(100.0f, displayMode.getWidth() / (float) displayMode.getHeight(), 0.1f, 300.0f);
