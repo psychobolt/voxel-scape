@@ -152,7 +152,6 @@ public class Chunk {
     // method: createBlock
     // purpose: Create a block with a type based on some height and level
     private Block createBlock(float level, float maxHeight) {
-        // TODO: Make the thing random
         // Level and maxHeight will be used to determine type later.
         int random = this.random.nextInt(6);
         switch (random) {
