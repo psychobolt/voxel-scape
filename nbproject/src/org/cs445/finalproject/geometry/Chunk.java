@@ -305,10 +305,10 @@ public class Chunk {
                 x + offset * 2, y + offset * 0,
                 x + offset * 3, y + offset * 0,
                 // back
-                x + offset * 4, y + offset * 0,
-                x + offset * 3, y + offset * 0,
-                x + offset * 3, y + offset * 1,
                 x + offset * 4, y + offset * 1,
+                x + offset * 3, y + offset * 1,
+                x + offset * 3, y + offset * 0,
+                x + offset * 4, y + offset * 0,
                 // front
                 x + offset * 4, y + offset * 0,
                 x + offset * 3, y + offset * 0,
