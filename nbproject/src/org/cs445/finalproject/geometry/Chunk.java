@@ -152,8 +152,23 @@ public class Chunk {
     // method: createBlock
     // purpose: Create a block with a type based on some height and level
     private Block createBlock(float level, float maxHeight) {
-        float random = this.random.nextFloat();
-        return new Block(Block.Type.Dirt);
+        // TODO: Make the thing random
+        // Level and maxHeight will be used to determine type later.
+        int random = this.random.nextInt(6);
+        switch (random) {
+            case 0:
+                return new Block(Block.Type.Dirt);
+            case 1:
+                return new Block(Block.Type.Bedrock);
+            case 2:
+                return new Block(Block.Type.Grass);
+            case 3:
+                return new Block(Block.Type.Sand);
+            case 4:
+                return new Block(Block.Type.Water);
+            default:
+                return new Block(Block.Type.Stone);
+        }
     }
     
     // method: createCube
@@ -212,7 +227,73 @@ public class Chunk {
     
     private float[] createTexCube(float x, float y, Block block) {
         float offset = (1024 / 16) / 1024.0f;
-        //if (block.getTypeId() == Block.Type.Dirt.getId()) {
+        if (block.getTypeId() == Block.Type.Dirt.getId()) {
+            return new float[] {
+                // top
+                x + offset * 3, y + offset * 1,
+                x + offset * 2, y + offset * 1,
+                x + offset * 2, y + offset * 0,
+                x + offset * 3, y + offset * 0,
+                // bottom
+                x + offset * 3, y + offset * 1,
+                x + offset * 2, y + offset * 1,
+                x + offset * 2, y + offset * 0,
+                x + offset * 3, y + offset * 0,
+                // back
+                x + offset * 3, y + offset * 1,
+                x + offset * 2, y + offset * 1,
+                x + offset * 2, y + offset * 0,
+                x + offset * 3, y + offset * 0,
+                // front
+                x + offset * 3, y + offset * 1,
+                x + offset * 2, y + offset * 1,
+                x + offset * 2, y + offset * 0,
+                x + offset * 3, y + offset * 0,
+                // right
+                x + offset * 3, y + offset * 1,
+                x + offset * 2, y + offset * 1,
+                x + offset * 2, y + offset * 0,
+                x + offset * 3, y + offset * 0,
+                // left
+                x + offset * 3, y + offset * 1,
+                x + offset * 2, y + offset * 1,
+                x + offset * 2, y + offset * 0,
+                x + offset * 3, y + offset * 0
+            };
+        } else if (block.getTypeId() == Block.Type.Bedrock.getId()) {
+            return new float[] {
+                // top
+                x + offset * 2, y + offset * 2,
+                x + offset * 1, y + offset * 2,
+                x + offset * 1, y + offset * 1,
+                x + offset * 2, y + offset * 1,
+                // bottom
+                x + offset * 2, y + offset * 2,
+                x + offset * 1, y + offset * 2,
+                x + offset * 1, y + offset * 1,
+                x + offset * 2, y + offset * 1,
+                // back
+                x + offset * 2, y + offset * 2,
+                x + offset * 1, y + offset * 2,
+                x + offset * 1, y + offset * 1,
+                x + offset * 2, y + offset * 1,
+                // front
+                x + offset * 2, y + offset * 2,
+                x + offset * 1, y + offset * 2,
+                x + offset * 1, y + offset * 1,
+                x + offset * 2, y + offset * 1,
+                // right
+                x + offset * 2, y + offset * 2,
+                x + offset * 1, y + offset * 2,
+                x + offset * 1, y + offset * 1,
+                x + offset * 2, y + offset * 1,
+                // left
+                x + offset * 2, y + offset * 2,
+                x + offset * 1, y + offset * 2,
+                x + offset * 1, y + offset * 1,
+                x + offset * 2, y + offset * 1
+            };
+        } else if (block.getTypeId() == Block.Type.Grass.getId()) {
             return new float[] {
                 // top
                 x + offset * 3, y + offset * 10,
@@ -225,26 +306,126 @@ public class Chunk {
                 x + offset * 2, y + offset * 0,
                 x + offset * 3, y + offset * 0,
                 // back
-                x + offset * 3, y + offset * 1,
                 x + offset * 4, y + offset * 1,
-                x + offset * 4, y + offset * 0,
+                x + offset * 3, y + offset * 1,
                 x + offset * 3, y + offset * 0,
+                x + offset * 4, y + offset * 0,
                 // front
-                x + offset * 4, y + offset * 0,
-                x + offset * 3, y + offset * 0,
-                x + offset * 3, y + offset * 1,
                 x + offset * 4, y + offset * 1,
+                x + offset * 3, y + offset * 1,
+                x + offset * 3, y + offset * 0,
+                x + offset * 4, y + offset * 0,
                 // right
-                x + offset * 4, y + offset * 0,
-                x + offset * 3, y + offset * 0,
-                x + offset * 3, y + offset * 1,
                 x + offset * 4, y + offset * 1,
-                // left
-                x + offset * 4, y + offset * 0,
-                x + offset * 3, y + offset * 0,
                 x + offset * 3, y + offset * 1,
-                x + offset * 4, y + offset * 1
+                x + offset * 3, y + offset * 0,
+                x + offset * 4, y + offset * 0,
+                // left
+                x + offset * 4, y + offset * 1,
+                x + offset * 3, y + offset * 1,
+                x + offset * 3, y + offset * 0,
+                x + offset * 4, y + offset * 0
             };
-        //}
+        } else if (block.getTypeId() == Block.Type.Sand.getId()) {
+            return new float[] {
+                // top
+                x + offset * 3, y + offset * 2,
+                x + offset * 2, y + offset * 2,
+                x + offset * 2, y + offset * 1,
+                x + offset * 3, y + offset * 1,
+                // bottom
+                x + offset * 3, y + offset * 2,
+                x + offset * 2, y + offset * 2,
+                x + offset * 2, y + offset * 1,
+                x + offset * 3, y + offset * 1,
+                // back
+                x + offset * 3, y + offset * 2,
+                x + offset * 2, y + offset * 2,
+                x + offset * 2, y + offset * 1,
+                x + offset * 3, y + offset * 1,
+                // front
+                x + offset * 3, y + offset * 2,
+                x + offset * 2, y + offset * 2,
+                x + offset * 2, y + offset * 1,
+                x + offset * 3, y + offset * 1,
+                // right
+                x + offset * 3, y + offset * 2,
+                x + offset * 2, y + offset * 2,
+                x + offset * 2, y + offset * 1,
+                x + offset * 3, y + offset * 1,
+                // left
+                x + offset * 3, y + offset * 2,
+                x + offset * 2, y + offset * 2,
+                x + offset * 2, y + offset * 1,
+                x + offset * 3, y + offset * 1
+            };
+        } else if (block.getTypeId() == Block.Type.Stone.getId()) {
+            return new float[] {
+                // top
+                x + offset * 2, y + offset * 1,
+                x + offset * 1, y + offset * 1,
+                x + offset * 1, y + offset * 0,
+                x + offset * 2, y + offset * 0,
+                // bottom
+                x + offset * 2, y + offset * 1,
+                x + offset * 1, y + offset * 1,
+                x + offset * 1, y + offset * 0,
+                x + offset * 2, y + offset * 0,
+                // back
+                x + offset * 2, y + offset * 1,
+                x + offset * 1, y + offset * 1,
+                x + offset * 1, y + offset * 0,
+                x + offset * 2, y + offset * 0,
+                // front
+                x + offset * 2, y + offset * 1,
+                x + offset * 1, y + offset * 1,
+                x + offset * 1, y + offset * 0,
+                x + offset * 2, y + offset * 0,
+                // right
+                x + offset * 2, y + offset * 1,
+                x + offset * 1, y + offset * 1,
+                x + offset * 1, y + offset * 0,
+                x + offset * 2, y + offset * 0,
+                // left
+                x + offset * 2, y + offset * 1,
+                x + offset * 1, y + offset * 1,
+                x + offset * 1, y + offset * 0,
+                x + offset * 2, y + offset * 0
+            };
+        } else if (block.getTypeId() == Block.Type.Water.getId()) {
+            return new float[] {
+                // top
+                x + offset * 1, y + offset * 10,
+                x + offset * 0, y + offset * 10,
+                x + offset * 0, y + offset * 9,
+                x + offset * 1, y + offset * 9,
+                // bottom
+                x + offset * 1, y + offset * 10,
+                x + offset * 0, y + offset * 10,
+                x + offset * 0, y + offset * 9,
+                x + offset * 1, y + offset * 9,
+                // back
+                x + offset * 1, y + offset * 10,
+                x + offset * 0, y + offset * 10,
+                x + offset * 0, y + offset * 9,
+                x + offset * 1, y + offset * 9,
+                // front
+                x + offset * 1, y + offset * 10,
+                x + offset * 0, y + offset * 10,
+                x + offset * 0, y + offset * 9,
+                x + offset * 1, y + offset * 9,
+                // right
+                x + offset * 1, y + offset * 10,
+                x + offset * 0, y + offset * 10,
+                x + offset * 0, y + offset * 9,
+                x + offset * 1, y + offset * 9,
+                // left
+                x + offset * 1, y + offset * 10,
+                x + offset * 0, y + offset * 10,
+                x + offset * 0, y + offset * 9,
+                x + offset * 1, y + offset * 9
+            };
+        }
+        return null;
     }
 }
