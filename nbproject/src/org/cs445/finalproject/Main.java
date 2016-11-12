@@ -4,7 +4,7 @@
 * class: CS 445 – Computer Graphics
 *
 * assignment: Final Project
-* date last modified: 10/27/2016
+* date last modified: 11/4/2016
 *
 * purpose: This class creates the main window, renders the scene 
 * to OpenGL context, and provides First Person camera controls.
@@ -30,7 +30,7 @@ public class Main {
     private static final Logger LOGGER = 
             Logger.getLogger(Main.class.getSimpleName());
     
-    private FPCameraController fp = new FPCameraController(0.0f, 0.0f, 0.0f);
+    private FPCameraController fp;
     private DisplayMode displayMode;
     
     // method: main
@@ -47,6 +47,7 @@ public class Main {
         try {
             createWindow();
             initGL();
+            fp = new FPCameraController(0.0f, 0.0f, 0.0f);
             fp.gameLoop();
         } catch (Exception e) {
             LOGGER.log(Level.SEVERE, "Failed to create window", e);
@@ -76,8 +77,12 @@ public class Main {
     // purpose: Initialize a OpenGL context
     private void initGL() {
         glClearDepth(1.0f);
+        glEnableClientState(GL_VERTEX_ARRAY);
+        glEnableClientState(GL_COLOR_ARRAY);
+        glEnableClientState(GL_TEXTURE_COORD_ARRAY);
         glEnable(GL_DEPTH_TEST);
-        glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
+        glEnable(GL_TEXTURE_2D);
+        glClearColor(0.5294f, 0.8078f, 0.92f, 1.0f);
         glMatrixMode(GL_PROJECTION);
         glLoadIdentity();
         GLU.gluPerspective(100.0f, displayMode.getWidth() / (float) displayMode.getHeight(), 0.1f, 300.0f);
