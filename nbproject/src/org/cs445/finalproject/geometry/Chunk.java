@@ -32,7 +32,7 @@ import org.newdawn.slick.util.ResourceLoader;
 
 public class Chunk {
     
-    public static final int SIZE = 150;
+    public static final int SIZE = 100;
     public static final int LENGTH = 2;
    
     private int maxHeight = 30;

@@ -55,9 +55,9 @@ public class FPCameraController {
         lookAt.z = 0.0f;
         yaw = 0.0f;
         pitch = 0.0f;
-        worldX = -150;
+        worldX = -100;
         worldY = -65;
-        worldZ = -150;
+        worldZ = -100;
         lightMode = LightMode.FULL_LIT.ordinal();
         toggleLightMode();
     }
