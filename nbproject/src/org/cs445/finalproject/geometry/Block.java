@@ -5,7 +5,7 @@
  * class: CS 445 – Computer Graphics
  *
  * assignment: Final Project 
- * date last modified: 11/4/16
+ * date last modified: 11/20/16
  *
  * purpose: Representation of a single Voxel
  *
@@ -39,6 +39,7 @@ public class Block {
     private boolean active;
     private final Type type;
     private float x, y, z;
+    private float[] texCoords;
     
     public Block(Type type) {
         this.type = type;
@@ -50,6 +51,16 @@ public class Block {
         this.x = x;
         this.y = y;
         this.z = z;
+    }
+    
+    // method: setTexCoords
+    // purpose: Set the texture coordinates of the Block
+    public void setTexCoords(float[] coords) {
+        texCoords = coords;
+    }
+    
+    public float[] getTexCoords() {
+        return texCoords;
     }
     
     // method: setActive

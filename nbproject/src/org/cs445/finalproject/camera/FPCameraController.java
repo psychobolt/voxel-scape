@@ -5,7 +5,7 @@
  * class: CS 445 – Computer Graphics
  *
  * assignment: Final Project 
- * date last modified: 11/5/16
+ * date last modified: 11/20/16
  *
  * purpose: Controller for the First Person Camera
  *
@@ -13,7 +13,11 @@
  */
 package org.cs445.finalproject.camera;
 
+import java.nio.FloatBuffer;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import org.cs445.finalproject.geometry.Chunk;
+import org.lwjgl.BufferUtils;
 import static org.lwjgl.opengl.GL11.*;
 
 import org.lwjgl.Sys;
@@ -31,9 +35,17 @@ public class FPCameraController {
     private float pitch;
     
     private Chunk world;
-    private int worldX;
-    private int worldY;
-    private int worldZ;
+    private final int worldX;
+    private final int worldY;
+    private final int worldZ;
+    
+    private int lightOffsetZ;
+    private enum LightMode {
+        FULL_LIT,
+        HALF_LIT,
+        DIM_LIGHT
+    }
+    private int lightMode;
     
     public FPCameraController(float x, float y, float z) {
         position = new Vector3f(x, y, z);
@@ -43,9 +55,11 @@ public class FPCameraController {
         lookAt.z = 0.0f;
         yaw = 0.0f;
         pitch = 0.0f;
-        worldX = -30;
+        worldX = -150;
         worldY = -65;
-        worldZ = -40;
+        worldZ = -150;
+        lightMode = LightMode.FULL_LIT.ordinal();
+        toggleLightMode();
     }
     
     // method: yaw
@@ -67,6 +81,11 @@ public class FPCameraController {
         float zOffset = distance * (float) Math.cos(Math.toRadians(yaw));
         position.x -= xOffset;
         position.z += zOffset;
+        lookAt.x -= xOffset;
+        lookAt.z += zOffset;
+        FloatBuffer lightPosition = BufferUtils.createFloatBuffer(4);
+        lightPosition.put(lookAt.x).put(lookAt.y).put(lookAt.z).put(1.0f).flip();
+        glLight(GL_LIGHT0, GL_POSITION, lightPosition);
     }
     
     // method: walkBackwards
@@ -76,6 +95,11 @@ public class FPCameraController {
         float zOffset = distance * (float) Math.cos(Math.toRadians(yaw));
         position.x += xOffset;
         position.z -= zOffset;
+        lookAt.x += xOffset;
+        lookAt.z -= zOffset;
+        FloatBuffer lightPosition = BufferUtils.createFloatBuffer(4);
+        lightPosition.put(lookAt.x).put(lookAt.y).put(lookAt.z).put(1.0f).flip();
+        glLight(GL_LIGHT0, GL_POSITION, lightPosition);
     }
     
     // method: strafeLeft
@@ -85,6 +109,11 @@ public class FPCameraController {
         float zOffset = distance * (float) Math.cos(Math.toRadians(yaw - 90));
         position.x -= xOffset;
         position.z += zOffset;
+        lookAt.x -= xOffset;
+        lookAt.z += zOffset;
+        FloatBuffer lightPosition = BufferUtils.createFloatBuffer(4);
+        lightPosition.put(lookAt.x).put(lookAt.y).put(lookAt.z).put(1.0f).flip();
+        glLight(GL_LIGHT0, GL_POSITION, lightPosition);
     }
     
     // method: strafeRight
@@ -94,6 +123,11 @@ public class FPCameraController {
         float zOffset = distance * (float) Math.cos(Math.toRadians(yaw + 90));
         position.x -= xOffset;
         position.z += zOffset;
+        lookAt.x -= xOffset;
+        lookAt.z += zOffset;
+        FloatBuffer lightPosition = BufferUtils.createFloatBuffer(4);
+        lightPosition.put(lookAt.x).put(lookAt.y).put(lookAt.z).put(1.0f).flip();
+        glLight(GL_LIGHT0, GL_POSITION, lightPosition);
     }
     
     // method: moveUp
@@ -116,7 +150,17 @@ public class FPCameraController {
         glRotatef(pitch, 1.0f, 0.0f, 0.0f);
         // rotate the pitch around the Y axis
         glRotatef(yaw, 0.0f, 1.0f, 0.0f);
-        // translate to the position vecotr's location
+        
+        if (Keyboard.isKeyDown(Keyboard.KEY_L)) { // toggle lighting
+            toggleLightMode();
+        }
+        
+        FloatBuffer lightPosition = BufferUtils.createFloatBuffer(4);
+        lightPosition.put(lookAt.x).put(lookAt.y).put(lookAt.z + lightOffsetZ)
+            .put(1.0f).flip();
+        glLight(GL_LIGHT0, GL_POSITION, lightPosition);
+        
+        // translate to the position vector's location
         glTranslatef(position.x, position.y, position.z);
     }
     
@@ -173,6 +217,30 @@ public class FPCameraController {
             Display.sync(60);
         }
         Display.destroy();
+    }
+    
+    private void toggleLightMode() {
+        try {
+            int lightMode = this.lightMode + 1;
+            switch (lightMode) {
+                case 1:
+                    lightOffsetZ = 0;
+                    this.lightMode = LightMode.HALF_LIT.ordinal();
+                    break;
+                case 2:
+                    lightOffsetZ = 2 * worldZ;
+                    this.lightMode = LightMode.DIM_LIGHT.ordinal();
+                    break;
+                default:
+                    lightOffsetZ = -2 * worldZ;
+                    this.lightMode = LightMode.FULL_LIT.ordinal();
+                    break;
+            }
+            Thread.sleep(250); //quick work around, should use delta time instead
+        } catch (InterruptedException ex) {
+            Logger.getLogger(FPCameraController.class.getName()).log(
+                Level.SEVERE, "Fail to delay light toggle", ex);
+        }
     }
     
     // method: render
