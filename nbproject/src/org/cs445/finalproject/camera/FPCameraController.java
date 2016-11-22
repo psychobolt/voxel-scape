@@ -246,6 +246,7 @@ public class FPCameraController {
     // method: render
     // purpose: Render primitives to the camera
     private void render() {
+        glCullFace(GL_BACK);
         world.render();
     }
     

@@ -37,9 +37,10 @@ public class Chunk {
    
     private int maxHeight = 30;
     private int midHeight; // calculated based on noise
-    private int minHeight = 20;
+    private int minHeight = 15;
     private Set<Integer> surfaceLevels;
     private Block[][][] blocks;
+    private int totalBlocks;
     private int vboVertexHandle;
     private int vboColorHandle;
     private int vboTextureHandle;
@@ -99,15 +100,16 @@ public class Chunk {
     // method: randomize
     // purpose: Find a good random chunk
     public void randomize() {
-        rebuildMesh(startX, startY, startZ);
+        Block[][][] blocks = rebuildMesh(startX, startY, startZ);
         LOGGER.log(Level.INFO, "Surface noise levels: {0}", surfaceLevels.size());
-        createVertexBuffers();
+        createVertexBuffers(blocks);
     }
     
     // method: rebuildMesh
     // purpose: Build the mesh of blocks using a simplex noise
-    private void rebuildMesh(float startX, float startY, float startZ) {
-        blocks = new Block[SIZE][SIZE][SIZE];
+    private Block[][][] rebuildMesh(float startX, float startY, float startZ) {
+        blocks = new Block[SIZE][maxHeight][SIZE];
+        totalBlocks = 0;
         
         int seed = random.nextInt(SIZE * SIZE);
         LOGGER.log(Level.INFO, "Noise 1 seed: {0}", seed);
@@ -151,7 +153,7 @@ public class Chunk {
             int x = random.nextInt(SIZE);
             int z = random.nextInt(SIZE);
             int y;
-            for (y = maxHeight; y >= midHeight; y--) {
+            for (y = maxHeight - 1; y >= midHeight; y--) {
                 if (blocks[x][y][z] != null) {
                     break;
                 }
@@ -161,33 +163,47 @@ public class Chunk {
             LOGGER.log(Level.INFO, "{0} Water blocks", waterCount);
             i++;
         }
+        
+        Block[][][] blocks = new Block[SIZE][maxHeight][SIZE];
+        for (int x = 0; x < SIZE; x++) {
+            for (int z = 0; z < SIZE; z++) {
+                for (int y = 0; y < maxHeight; y++) {
+                    if (isVisible(x, y, z)) {
+                        blocks[x][y][z] = this.blocks[x][y][z];
+                        totalBlocks++;
+                    }
+                }
+            }
+        }
+        return blocks;
     }
     
     // method: createVertexBuffers
     // purpose: Build object, color, and texture vertex buffers
-    private void createVertexBuffers() {
+    private void createVertexBuffers(Block[][][] blocks) {
         vboColorHandle = glGenBuffers();
         vboVertexHandle = glGenBuffers();
         vboTextureHandle = glGenBuffers();
         FloatBuffer vertexPositionData = 
-            BufferUtils.createFloatBuffer(SIZE * SIZE * SIZE * 6 * 12); // size^3 * (6 vertices) * (12 edges)
+            BufferUtils.createFloatBuffer(totalBlocks * 6 * 12); // size^3 * (6 vertices) * (12 edges)
         FloatBuffer vertexColorData = 
-            BufferUtils.createFloatBuffer(SIZE * SIZE * SIZE * 6 * 12);
+            BufferUtils.createFloatBuffer(totalBlocks * 6 * 12);
         FloatBuffer vertexTextureData = 
-            BufferUtils.createFloatBuffer(SIZE * SIZE * SIZE * 6 * 12);
+            BufferUtils.createFloatBuffer(totalBlocks * 6 * 12);
         for (float x = 0.0f; x < SIZE; x++) {
             for (float z = 0.0f; z < SIZE; z++) {
                 for (float y = 0; y < maxHeight; y++) {
                     Block block = blocks[(int) x][(int) y][(int) z];
-                    if (block != null) {
-                        vertexPositionData.put(createCube(
-                            startX + x * LENGTH, 
-                            startY + y * LENGTH,
-                            startZ + z * LENGTH));
-                        vertexColorData.put(createCubeVertexCol(
-                            getCubeColor(block)));
-                        vertexTextureData.put(block.getTexCoords());
+                    if (block == null) {
+                        continue;
                     }
+                    vertexPositionData.put(createCube(
+                        startX + x * LENGTH, 
+                        startY + y * LENGTH,
+                        startZ + z * LENGTH));
+                    vertexColorData.put(createCubeVertexCol(
+                        getCubeColor(block)));
+                    vertexTextureData.put(block.getTexCoords());
                 }
             }
         }
@@ -266,7 +282,8 @@ public class Chunk {
     // method: isBoundaryBlock2D
     // purpose: check if a block is a boundary
     private boolean isBoundaryBlock2D(int x, int y, int z) {
-        return x < 1 || z < 1 || x == SIZE - 1 || z == SIZE - 1 ||
+        return x < 1 || z < 1 || x == SIZE - 1 || z == SIZE - 1 || 
+               y == maxHeight - 1 ||
                // same level
                blocks[x - 1][y][z] == null ||
                blocks[x][y][z - 1] == null || 
@@ -277,6 +294,22 @@ public class Chunk {
                blocks[x][y + 1][z - 1] != null || 
                blocks[x][y + 1][z + 1] != null || 
                blocks[x + 1][y + 1][z] != null;
+    }
+    
+    // method: isSurfaceBlock2D
+    private boolean isVisible(int x, int y, int z) {
+        return x == 0 || 
+               x == SIZE - 1 ||
+               y == 0 || 
+               y == maxHeight - 1 ||
+               z == 0 || 
+               z == SIZE - 1 ||
+               blocks[x][y][z] == null ||
+               blocks[x - 1][y][z] == null ||
+               blocks[x + 1][y][z] == null ||
+               blocks[x][y][z - 1] == null ||
+               blocks[x][y][z + 1] == null ||
+               blocks[x][y + 1][z] == null;
     }
     
     // method: getNeighbors2D
@@ -317,9 +350,9 @@ public class Chunk {
         return new float[] {
             // top quad
             offset + x, offset + y, offset + z,
-            -offset + x, offset + y, offset + z,
-            -offset + x, offset + y, -offset + z,
             offset + x, offset + y, -offset + z,
+            -offset + x, offset + y, -offset + z,
+            -offset + x, offset + y, offset + z,
             // bottom face
             offset + x, -offset + y, offset + z,
             -offset + x, -offset + y, offset + z,

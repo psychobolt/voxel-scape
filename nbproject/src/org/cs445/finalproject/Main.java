@@ -90,6 +90,7 @@ public class Main {
         glLight(GL_LIGHT0, GL_SPECULAR, whiteLight);
         glLight(GL_LIGHT0, GL_DIFFUSE, whiteLight);
         glLight(GL_LIGHT0, GL_AMBIENT, whiteLight);
+        glEnable(GL_CULL_FACE);
         glEnable(GL_DEPTH_TEST);
         glEnable(GL_TEXTURE_2D);
         glEnable(GL_LIGHTING);
