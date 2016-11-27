@@ -31,10 +31,10 @@ import org.newdawn.slick.opengl.TextureLoader;
 import org.newdawn.slick.util.ResourceLoader;
 
 public class Chunk {
-    
+
     public static final int SIZE = 100;
     public static final int LENGTH = 2;
-   
+
     private int maxHeight = 30;
     private int midHeight; // calculated based on noise
     private int minHeight = 15;
@@ -45,25 +45,25 @@ public class Chunk {
     private int vboColorHandle;
     private int vboTextureHandle;
     private final int startX, startY, startZ;
-    
+
     private final static Block GRASS = new Block(Block.Type.Grass);
     private final static Block SAND = new Block(Block.Type.Sand);
     private final static Block WATER = new Block(Block.Type.Water);
     private final static Block DIRT = new Block(Block.Type.Dirt);
     private final static Block STONE = new Block(Block.Type.Stone);
     private final static Block BEDROCK = new Block(Block.Type.Bedrock);
-    
+
     private final Random random;
-    
+
     private static final Logger LOGGER = Logger.getLogger(Chunk.class.getName());
-    
+
     public Chunk(int startX, int startY, int startZ) {
         midHeight = maxHeight;
         random = new Random();
         try {
-            TextureLoader.getTexture("PNG", 
-                ResourceLoader.getResourceAsStream(
-                    "org/cs445/finalproject/assets/terrain.png"));
+            TextureLoader.getTexture("PNG",
+                    ResourceLoader.getResourceAsStream(
+                            "org/cs445/finalproject/assets/terrain.png"));
         } catch (Exception e) {
             LOGGER.log(Level.WARNING, "Failed to load terrain.png", e);
         }
@@ -81,22 +81,22 @@ public class Chunk {
         BEDROCK.setTexCoords(createTexCube(0.0f, 0.0f, Block.Type.Bedrock));
         randomize();
     }
-    
+
     // method: render
     // purpose: Render the chunk
     public void render() {
         glPushMatrix();
-            glBindBuffer(GL_ARRAY_BUFFER, vboVertexHandle);
-            glVertexPointer(3, GL_FLOAT, 0, 0L);
-            glBindBuffer(GL_ARRAY_BUFFER, vboColorHandle);
-            glColorPointer(3, GL_FLOAT, 0, 0L);
-            glBindBuffer(GL_ARRAY_BUFFER, vboTextureHandle);
-            glBindTexture(GL_TEXTURE_2D, 1);
-            glTexCoordPointer(2, GL_FLOAT, 0, 0L);
-            glDrawArrays(GL_QUADS, 0, SIZE * SIZE * SIZE * 24); // size^3 * (3 floats) * (6 vertices)
+        glBindBuffer(GL_ARRAY_BUFFER, vboVertexHandle);
+        glVertexPointer(3, GL_FLOAT, 0, 0L);
+        glBindBuffer(GL_ARRAY_BUFFER, vboColorHandle);
+        glColorPointer(3, GL_FLOAT, 0, 0L);
+        glBindBuffer(GL_ARRAY_BUFFER, vboTextureHandle);
+        glBindTexture(GL_TEXTURE_2D, 1);
+        glTexCoordPointer(2, GL_FLOAT, 0, 0L);
+        glDrawArrays(GL_QUADS, 0, SIZE * SIZE * SIZE * 24); // size^3 * (3 floats) * (6 vertices)
         glPopMatrix();
     }
-    
+
     // method: randomize
     // purpose: Find a good random chunk
     public void randomize() {
@@ -104,38 +104,38 @@ public class Chunk {
         LOGGER.log(Level.INFO, "Surface noise levels: {0}", surfaceLevels.size());
         createVertexBuffers(blocks);
     }
-    
+
     // method: rebuildMesh
     // purpose: Build the mesh of blocks using a simplex noise
     private Block[][][] rebuildMesh(float startX, float startY, float startZ) {
         blocks = new Block[SIZE][maxHeight][SIZE];
         totalBlocks = 0;
-        
+
         int seed = random.nextInt(SIZE * SIZE);
         LOGGER.log(Level.INFO, "Noise 1 seed: {0}", seed);
         SimplexNoise surfaceNoise1 = new SimplexNoise(30000, 0.66, seed);
-        seed =  random.nextInt(SIZE * SIZE);
+        seed = random.nextInt(SIZE * SIZE);
         LOGGER.log(Level.INFO, "Noise 2 seed: {0}", seed);
         SimplexNoise surfaceNoise2 = new SimplexNoise(300000, 0.77, seed);
-        
-        seed =  new Random().nextInt(SIZE * SIZE);
+
+        seed = new Random().nextInt(SIZE * SIZE);
         SimplexNoise deepNoise = new SimplexNoise(30000, 0.77, seed);
-        
+
         surfaceLevels = new TreeSet<>();
         for (float x = 0.0f; x < SIZE; x++) {
             for (float z = 0.0f; z < SIZE; z++) {
                 int i = (int) (startX + x);
                 int k = (int) (startZ + z);
-                
-                int surfaceHeight = Math.min(Math.max(maxHeight - 
-                        (int) (100 * surfaceNoise1.getNoise(i, k)), 1), maxHeight)
-                    + Math.min(Math.max(maxHeight - 
-                        (int) (100 * surfaceNoise2.getNoise(i, k)), 1), maxHeight);
+
+                int surfaceHeight = Math.min(Math.max(maxHeight
+                        - (int) (100 * surfaceNoise1.getNoise(i, k)), 1), maxHeight)
+                        + Math.min(Math.max(maxHeight
+                                - (int) (100 * surfaceNoise2.getNoise(i, k)), 1), maxHeight);
                 surfaceHeight /= 2;
-                
-                int deepHeight = Math.min(Math.max(minHeight - 
-                    (int) (100 * deepNoise.getNoise(i, k)), 1), minHeight);
-                
+
+                int deepHeight = Math.min(Math.max(minHeight
+                        - (int) (100 * deepNoise.getNoise(i, k)), 1), minHeight);
+
                 surfaceLevels.add(surfaceHeight);
                 if (surfaceHeight < midHeight) {
                     midHeight = surfaceHeight;
@@ -145,7 +145,7 @@ public class Chunk {
                 }
             }
         }
-        
+
         int waterCount = 0;
         int maxIter = 20;
         int i = 0;
@@ -163,7 +163,7 @@ public class Chunk {
             LOGGER.log(Level.INFO, "{0} Water blocks", waterCount);
             i++;
         }
-        
+
         Block[][][] blocks = new Block[SIZE][maxHeight][SIZE];
         for (int x = 0; x < SIZE; x++) {
             for (int z = 0; z < SIZE; z++) {
@@ -177,19 +177,44 @@ public class Chunk {
         }
         return blocks;
     }
-    
+
+    // method: tooClose
+    // purpose: Given a point in space, check if there is a block close to the point. 
+    //          Used for collision checking.
+    public boolean tooClose(float cameraX, float cameraY, float cameraZ) {
+        cameraX += 100;
+        cameraX = 200 - cameraX;
+        cameraZ += 100;
+        cameraZ = 200 - cameraZ;
+        cameraY = 65 - cameraY;
+        return (hasBlock(cameraX - 0.5f, cameraY, cameraZ - 0.5f) || hasBlock(cameraX + 0.5f, cameraY, cameraZ - 0.5f) || hasBlock(cameraX - 0.5f, cameraY, cameraZ + 0.5f) || hasBlock(cameraX + 0.5f, cameraY, cameraZ + 0.5f));
+    }
+
+    // method: hasBlock
+    // purpose: takes in augmented camera coordinates and checks if that coordinate is inside a block on our grid.
+    private boolean hasBlock(float cameraX, float cameraY, float cameraZ) {
+        int gridX = (int) (cameraX / 2 + 0.5f);
+        int gridZ = (int) (cameraZ / 2 + 0.5f);
+        int gridY = (int) (cameraY / 2);
+        try {
+            return blocks[gridX][gridY][gridZ] != null;
+        } catch (ArrayIndexOutOfBoundsException e) {
+            return false;
+        }
+    }
+
     // method: createVertexBuffers
     // purpose: Build object, color, and texture vertex buffers
     private void createVertexBuffers(Block[][][] blocks) {
         vboColorHandle = glGenBuffers();
         vboVertexHandle = glGenBuffers();
         vboTextureHandle = glGenBuffers();
-        FloatBuffer vertexPositionData = 
-            BufferUtils.createFloatBuffer(totalBlocks * 6 * 12); // size^3 * (6 vertices) * (12 edges)
-        FloatBuffer vertexColorData = 
-            BufferUtils.createFloatBuffer(totalBlocks * 6 * 12);
-        FloatBuffer vertexTextureData = 
-            BufferUtils.createFloatBuffer(totalBlocks * 6 * 12);
+        FloatBuffer vertexPositionData
+                = BufferUtils.createFloatBuffer(totalBlocks * 6 * 12); // size^3 * (6 vertices) * (12 edges)
+        FloatBuffer vertexColorData
+                = BufferUtils.createFloatBuffer(totalBlocks * 6 * 12);
+        FloatBuffer vertexTextureData
+                = BufferUtils.createFloatBuffer(totalBlocks * 6 * 12);
         for (float x = 0.0f; x < SIZE; x++) {
             for (float z = 0.0f; z < SIZE; z++) {
                 for (float y = 0; y < maxHeight; y++) {
@@ -198,11 +223,11 @@ public class Chunk {
                         continue;
                     }
                     vertexPositionData.put(createCube(
-                        startX + x * LENGTH, 
-                        startY + y * LENGTH,
-                        startZ + z * LENGTH));
+                            startX + x * LENGTH,
+                            startY + y * LENGTH,
+                            startZ + z * LENGTH));
                     vertexColorData.put(createCubeVertexCol(
-                        getCubeColor(block)));
+                            getCubeColor(block)));
                     vertexTextureData.put(block.getTexCoords());
                 }
             }
@@ -220,7 +245,7 @@ public class Chunk {
         glBufferData(GL_ARRAY_BUFFER, vertexTextureData, GL_STATIC_DRAW);
         glBindBuffer(GL_ARRAY_BUFFER, 0);
     }
-    
+
     // method: createBlock
     // purpose: Create a block with a type based on some height and level
     private Block setBlock(float level, float minHeight, float maxHeight) {
@@ -238,18 +263,18 @@ public class Chunk {
             switch (random) {
                 case 0:
                     return DIRT;
-                default: 
+                default:
                     return STONE;
             }
         }
         return GRASS;
     }
-    
+
     // method: fillLevelBlocks2D
     // purpose: perform fill for all blocks at a level that is not a boundary
-    private int fillLevelBlocks2D(int startX, int startY, int startZ, 
-        Block fillBlock,
-        Block boundaryFill) {
+    private int fillLevelBlocks2D(int startX, int startY, int startZ,
+            Block fillBlock,
+            Block boundaryFill) {
         int count = 0;
         if (isBoundaryBlock2D(startX, startY, startZ)) {
             return count;
@@ -278,40 +303,40 @@ public class Chunk {
         }
         return count;
     }
-    
+
     // method: isBoundaryBlock2D
     // purpose: check if a block is a boundary
     private boolean isBoundaryBlock2D(int x, int y, int z) {
-        return x < 1 || z < 1 || x == SIZE - 1 || z == SIZE - 1 || 
-               y == maxHeight - 1 ||
-               // same level
-               blocks[x - 1][y][z] == null ||
-               blocks[x][y][z - 1] == null || 
-               blocks[x][y][z + 1] == null || 
-               blocks[x + 1][y][z] == null ||
-               // above level
-               blocks[x - 1][y + 1][z] != null ||
-               blocks[x][y + 1][z - 1] != null || 
-               blocks[x][y + 1][z + 1] != null || 
-               blocks[x + 1][y + 1][z] != null;
+        return x < 1 || z < 1 || x == SIZE - 1 || z == SIZE - 1
+                || y == maxHeight - 1
+                || // same level
+                blocks[x - 1][y][z] == null
+                || blocks[x][y][z - 1] == null
+                || blocks[x][y][z + 1] == null
+                || blocks[x + 1][y][z] == null
+                || // above level
+                blocks[x - 1][y + 1][z] != null
+                || blocks[x][y + 1][z - 1] != null
+                || blocks[x][y + 1][z + 1] != null
+                || blocks[x + 1][y + 1][z] != null;
     }
-    
+
     // method: isSurfaceBlock2D
     private boolean isVisible(int x, int y, int z) {
-        return x == 0 || 
-               x == SIZE - 1 ||
-               y == 0 || 
-               y == maxHeight - 1 ||
-               z == 0 || 
-               z == SIZE - 1 ||
-               blocks[x][y][z] == null ||
-               blocks[x - 1][y][z] == null ||
-               blocks[x + 1][y][z] == null ||
-               blocks[x][y][z - 1] == null ||
-               blocks[x][y][z + 1] == null ||
-               blocks[x][y + 1][z] == null;
+        return x == 0
+                || x == SIZE - 1
+                || y == 0
+                || y == maxHeight - 1
+                || z == 0
+                || z == SIZE - 1
+                || blocks[x][y][z] == null
+                || blocks[x - 1][y][z] == null
+                || blocks[x + 1][y][z] == null
+                || blocks[x][y][z - 1] == null
+                || blocks[x][y][z + 1] == null
+                || blocks[x][y + 1][z] == null;
     }
-    
+
     // method: getNeighbors2D
     // purpose: Given a block (x,y,z), return its 8 neighbor block positions
     private List<Vector3i> getNeighbors2D(int x, int y, int z) {
@@ -342,12 +367,12 @@ public class Chunk {
         }
         return neighbors;
     }
-    
+
     // method: createCube
     // purpose: Create a cube at a location
     private float[] createCube(float x, float y, float z) {
         int offset = LENGTH / 2;
-        return new float[] {
+        return new float[]{
             // top quad
             offset + x, offset + y, offset + z,
             offset + x, offset + y, -offset + z,
@@ -380,7 +405,7 @@ public class Chunk {
             -offset + x, -offset + y, offset + z
         };
     }
-    
+
     // method: createCubeVertexCol
     // purpose: Create the color vertex array based on the cube's colors
     private float[] createCubeVertexCol(float[] cubeColorArray) {
@@ -390,18 +415,18 @@ public class Chunk {
         }
         return cubeColors;
     }
-    
+
     // method: getCubeColor
     // purpose: Returns the color of the cube
     private float[] getCubeColor(Block block) {
-        return new float[] {1.0f, 1.0f, 1.0f};
+        return new float[]{1.0f, 1.0f, 1.0f};
     }
-    
+
     private float[] createTexCube(float x, float y, Block.Type type) {
         float offset = (1024 / 16) / 1024.0f;
         switch (type) {
             case Dirt:
-                return new float[] {
+                return new float[]{
                     // top
                     x + offset * 3, y + offset * 1,
                     x + offset * 2, y + offset * 1,
@@ -434,7 +459,7 @@ public class Chunk {
                     x + offset * 3, y + offset * 0
                 };
             case Bedrock:
-                return new float[] {
+                return new float[]{
                     // top
                     x + offset * 2, y + offset * 2,
                     x + offset * 1, y + offset * 2,
@@ -467,7 +492,7 @@ public class Chunk {
                     x + offset * 2, y + offset * 1
                 };
             case Sand:
-                return new float[] {
+                return new float[]{
                     // top
                     x + offset * 3, y + offset * 2,
                     x + offset * 2, y + offset * 2,
@@ -500,7 +525,7 @@ public class Chunk {
                     x + offset * 3, y + offset * 1
                 };
             case Stone:
-                return new float[] {
+                return new float[]{
                     // top
                     x + offset * 2, y + offset * 1,
                     x + offset * 1, y + offset * 1,
@@ -533,7 +558,7 @@ public class Chunk {
                     x + offset * 2, y + offset * 0
                 };
             case Water:
-                return new float[] {
+                return new float[]{
                     // top
                     x + offset * 1, y + offset * 10,
                     x + offset * 0, y + offset * 10,
@@ -567,7 +592,7 @@ public class Chunk {
                 };
             case Grass:
             default:
-                return new float[] {
+                return new float[]{
                     // top
                     x + offset * 3, y + offset * 10,
                     x + offset * 2, y + offset * 10,
@@ -597,8 +622,7 @@ public class Chunk {
                     x + offset * 4, y + offset * 0,
                     x + offset * 3, y + offset * 0,
                     x + offset * 3, y + offset * 1,
-                    x + offset * 4, y + offset * 1,
-                };
+                    x + offset * 4, y + offset * 1,};
         }
     }
 }
