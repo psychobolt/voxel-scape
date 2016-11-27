@@ -84,14 +84,15 @@ public class FPCameraController {
         float zOffset = distance * (float) Math.cos(Math.toRadians(yaw));
         position.x -= xOffset;
         position.z += zOffset;
-        lookAt.x -= xOffset;
-        lookAt.z += zOffset;
-        FloatBuffer lightPosition = BufferUtils.createFloatBuffer(4);
-        lightPosition.put(lookAt.x).put(lookAt.y).put(lookAt.z).put(1.0f).flip();
-        glLight(GL_LIGHT0, GL_POSITION, lightPosition);
         if (world.tooClose(position.x, position.y, position.z)) {
             position.x = prevpositionx;
             position.z = prevpositionz;
+        } else {
+            lookAt.x -= xOffset;
+            lookAt.z += zOffset;
+            FloatBuffer lightPosition = BufferUtils.createFloatBuffer(4);
+            lightPosition.put(lookAt.x).put(lookAt.y).put(lookAt.z).put(1.0f).flip();
+            glLight(GL_LIGHT0, GL_POSITION, lightPosition);
         }
     }
 
@@ -104,14 +105,15 @@ public class FPCameraController {
         float zOffset = distance * (float) Math.cos(Math.toRadians(yaw));
         position.x += xOffset;
         position.z -= zOffset;
-        lookAt.x += xOffset;
-        lookAt.z -= zOffset;
-        FloatBuffer lightPosition = BufferUtils.createFloatBuffer(4);
-        lightPosition.put(lookAt.x).put(lookAt.y).put(lookAt.z).put(1.0f).flip();
-        glLight(GL_LIGHT0, GL_POSITION, lightPosition);
         if (world.tooClose(position.x, position.y, position.z)) {
             position.x = prevpositionx;
             position.z = prevpositionz;
+        } else {
+            lookAt.x += xOffset;
+            lookAt.z -= zOffset;
+            FloatBuffer lightPosition = BufferUtils.createFloatBuffer(4);
+            lightPosition.put(lookAt.x).put(lookAt.y).put(lookAt.z).put(1.0f).flip();
+            glLight(GL_LIGHT0, GL_POSITION, lightPosition);
         }
     }
 
@@ -124,14 +126,15 @@ public class FPCameraController {
         float zOffset = distance * (float) Math.cos(Math.toRadians(yaw - 90));
         position.x -= xOffset;
         position.z += zOffset;
-        lookAt.x -= xOffset;
-        lookAt.z += zOffset;
-        FloatBuffer lightPosition = BufferUtils.createFloatBuffer(4);
-        lightPosition.put(lookAt.x).put(lookAt.y).put(lookAt.z).put(1.0f).flip();
-        glLight(GL_LIGHT0, GL_POSITION, lightPosition);
         if (world.tooClose(position.x, position.y, position.z)) {
             position.x = prevpositionx;
             position.z = prevpositionz;
+        } else {
+            lookAt.x -= xOffset;
+            lookAt.z += zOffset;
+            FloatBuffer lightPosition = BufferUtils.createFloatBuffer(4);
+            lightPosition.put(lookAt.x).put(lookAt.y).put(lookAt.z).put(1.0f).flip();
+            glLight(GL_LIGHT0, GL_POSITION, lightPosition);
         }
     }
 
@@ -144,14 +147,15 @@ public class FPCameraController {
         float zOffset = distance * (float) Math.cos(Math.toRadians(yaw + 90));
         position.x -= xOffset;
         position.z += zOffset;
-        lookAt.x -= xOffset;
-        lookAt.z += zOffset;
-        FloatBuffer lightPosition = BufferUtils.createFloatBuffer(4);
-        lightPosition.put(lookAt.x).put(lookAt.y).put(lookAt.z).put(1.0f).flip();
-        glLight(GL_LIGHT0, GL_POSITION, lightPosition);
         if (world.tooClose(position.x, position.y, position.z)) {
             position.x = prevpositionx;
             position.z = prevpositionz;
+        } else {
+            lookAt.x -= xOffset;
+            lookAt.z += zOffset;
+            FloatBuffer lightPosition = BufferUtils.createFloatBuffer(4);
+            lightPosition.put(lookAt.x).put(lookAt.y).put(lookAt.z).put(1.0f).flip();
+            glLight(GL_LIGHT0, GL_POSITION, lightPosition);
         }
     }
 
