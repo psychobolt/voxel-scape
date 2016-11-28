@@ -2,10 +2,10 @@
  * *************************************************************
  * file: FPCameraController.java
  * author: Loc Mai, Michael Tran, George Zhang
- * class: CS 445 – Computer Graphics
+ * class: CS 445 - Computer Graphics
  *
  * assignment: Final Project
- * date last modified: 11/20/16
+ * date last modified: 11/27/16
  *
  * purpose: Controller for the First Person Camera
  *
@@ -40,6 +40,8 @@ public class FPCameraController {
     private final int worldZ;
 
     private int lightOffsetZ;
+    
+    private boolean collisionsOn;
 
     private enum LightMode {
         FULL_LIT,
@@ -47,8 +49,13 @@ public class FPCameraController {
         DIM_LIGHT
     }
     private int lightMode;
+    private boolean night;
+    private float light1;
+    private float light2;
+    private float light3;
 
     public FPCameraController(float x, float y, float z) {
+        collisionsOn = true;
         position = new Vector3f(x, y, z);
         lookAt = new Vector3f(x, y, z);
         lookAt.x = 0.0f;
@@ -59,6 +66,10 @@ public class FPCameraController {
         worldX = -100;
         worldY = -65;
         worldZ = -100;
+        night = false;
+        light1 = 1.0f;
+        light2 = 1.0f;
+        light3 = 1.0f;
         lightMode = LightMode.FULL_LIT.ordinal();
         toggleLightMode();
     }
@@ -84,9 +95,15 @@ public class FPCameraController {
         float zOffset = distance * (float) Math.cos(Math.toRadians(yaw));
         position.x -= xOffset;
         position.z += zOffset;
-        if (world.tooClose(position.x, position.y, position.z)) {
-            position.x = prevpositionx;
-            position.z = prevpositionz;
+        if (collisionsOn && (world.tooClose(position.x, position.y, position.z))) {
+            if ( !world.tooClose( position.x, position.y, prevpositionz)) {
+                position.z = prevpositionz;
+            } else if ( ! world.tooClose( prevpositionx, position.y, position.z)) {
+                position.x = prevpositionx;
+            } else {
+                position.x = prevpositionx;
+                position.z = prevpositionz;
+            }
         } else {
             lookAt.x -= xOffset;
             lookAt.z += zOffset;
@@ -105,9 +122,15 @@ public class FPCameraController {
         float zOffset = distance * (float) Math.cos(Math.toRadians(yaw));
         position.x += xOffset;
         position.z -= zOffset;
-        if (world.tooClose(position.x, position.y, position.z)) {
-            position.x = prevpositionx;
-            position.z = prevpositionz;
+        if (collisionsOn && (world.tooClose(position.x, position.y, position.z))) {
+            if ( !world.tooClose( position.x, position.y, prevpositionz)) {
+                position.z = prevpositionz;
+            } else if ( ! world.tooClose( prevpositionx, position.y, position.z)) {
+                position.x = prevpositionx;
+            } else {
+                position.x = prevpositionx;
+                position.z = prevpositionz;
+            }
         } else {
             lookAt.x += xOffset;
             lookAt.z -= zOffset;
@@ -126,9 +149,15 @@ public class FPCameraController {
         float zOffset = distance * (float) Math.cos(Math.toRadians(yaw - 90));
         position.x -= xOffset;
         position.z += zOffset;
-        if (world.tooClose(position.x, position.y, position.z)) {
-            position.x = prevpositionx;
-            position.z = prevpositionz;
+        if (collisionsOn && (world.tooClose(position.x, position.y, position.z))) {
+            if ( !world.tooClose( position.x, position.y, prevpositionz)) {
+                position.z = prevpositionz;
+            } else if ( ! world.tooClose( prevpositionx, position.y, position.z)) {
+                position.x = prevpositionx;
+            } else {
+                position.x = prevpositionx;
+                position.z = prevpositionz;
+            }
         } else {
             lookAt.x -= xOffset;
             lookAt.z += zOffset;
@@ -147,9 +176,15 @@ public class FPCameraController {
         float zOffset = distance * (float) Math.cos(Math.toRadians(yaw + 90));
         position.x -= xOffset;
         position.z += zOffset;
-        if (world.tooClose(position.x, position.y, position.z)) {
-            position.x = prevpositionx;
-            position.z = prevpositionz;
+        if (collisionsOn && (world.tooClose(position.x, position.y, position.z))) {
+            if ( !world.tooClose( position.x, position.y, prevpositionz)) {
+                position.z = prevpositionz;
+            } else if ( ! world.tooClose( prevpositionx, position.y, position.z)) {
+                position.x = prevpositionx;
+            } else {
+                position.x = prevpositionx;
+                position.z = prevpositionz;
+            }
         } else {
             lookAt.x -= xOffset;
             lookAt.z += zOffset;
@@ -163,7 +198,7 @@ public class FPCameraController {
     // purpose: Moves the camera up
     public void moveUp(float distance) {
         position.y -= distance;
-        if (world.tooClose(position.x, position.y, position.z)) {
+        if (collisionsOn && (world.tooClose(position.x, position.y, position.z))) {
             position.y += distance;
         }
 
@@ -173,7 +208,7 @@ public class FPCameraController {
     // purpose: Moves the camera down
     public void moveDown(float distance) {
         position.y += distance;
-        if (world.tooClose(position.x, position.y, position.z)) {
+        if (collisionsOn && (world.tooClose(position.x, position.y, position.z))) {
             position.y -= distance;
         }
     }
@@ -190,11 +225,19 @@ public class FPCameraController {
         if (Keyboard.isKeyDown(Keyboard.KEY_L)) { // toggle lighting
             toggleLightMode();
         }
-
+        if (Keyboard.isKeyDown(Keyboard.KEY_N)) { // toggle night mode
+            toggleNightMode();
+        }
+        
         FloatBuffer lightPosition = BufferUtils.createFloatBuffer(4);
+        FloatBuffer nightLight = BufferUtils.createFloatBuffer(4);
         lightPosition.put(lookAt.x).put(lookAt.y).put(lookAt.z + lightOffsetZ)
                 .put(1.0f).flip();
+        nightLight.put(light1).put(light2).put(light3).put(0.0f).flip();
         glLight(GL_LIGHT0, GL_POSITION, lightPosition);
+        glLight(GL_LIGHT0, GL_SPECULAR, nightLight);
+        glLight(GL_LIGHT0, GL_DIFFUSE, nightLight);
+        glLight(GL_LIGHT0, GL_AMBIENT, nightLight);
 
         // translate to the position vector's location
         glTranslatef(position.x, position.y, position.z);
@@ -244,6 +287,15 @@ public class FPCameraController {
             if (Keyboard.isKeyDown(Keyboard.KEY_R)) { // randomize world
                 world.randomize();
             }
+            if (Keyboard.isKeyDown(Keyboard.KEY_C)) { // toggle collisions
+                collisionsOn = ! collisionsOn;
+                System.out.println( collisionsOn );
+                try {
+                    Thread.sleep(500);
+                } catch ( InterruptedException e ) {
+                    
+                }
+            }
 
             glLoadIdentity();
             lookThrough();
@@ -276,6 +328,25 @@ public class FPCameraController {
         } catch (InterruptedException ex) {
             Logger.getLogger(FPCameraController.class.getName()).log(
                     Level.SEVERE, "Fail to delay light toggle", ex);
+        }
+    }
+    
+    private void toggleNightMode(){
+        try {
+            if(night == true){
+                light1 = 1.0f;
+                light2 = 1.0f;
+                light3 = 1.0f;
+                night = false;
+            } else {
+                light1 = 0.25f;
+                light2 = 0.25f;
+                light3 = 1.0f;
+                night = true;
+            }
+            Thread.sleep(250);
+        } catch (Exception e){
+            
         }
     }
 
