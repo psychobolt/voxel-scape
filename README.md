@@ -1,6 +1,8 @@
 # VoxelScape
 
-A 3D game composed of Voxels, similiar to MineCraft, made for a Computer Graphics course.
+A 3D engine composed of Voxels, similiar to MineCraft, made for a Computer Graphics course.
+
+![alt text](https://github.com/psychobolt/voxelscape/raw/master/preview.png "Preview")
 
 ## Development
 
@@ -21,12 +23,15 @@ A 3D game composed of Voxels, similiar to MineCraft, made for a Computer Graphic
 
 ## Controls
 
-| Key        | Action          |
-| -----------|:---------------:|
-| W          | Move forward    |
-| S          | Move backward   |
-| A          | Strafe left     |
-| D          | Strafe right    |
-| Space      | Move up         |
-| Left-Shift | Move down       |
-| R          | Randomize world |
+| Key        | Action                |
+| -----------|:---------------------:|
+| W          | Move forward          |
+| S          | Move backward         |
+| A          | Strafe left           |
+| D          | Strafe right          |
+| Space      | Move up               |
+| Left-Shift | Move down             |
+| R          | Randomize world       |
+| C          | Toggle Collision      |
+| L          | Toggle Light Position |
+| N          | Toggle Night          |
